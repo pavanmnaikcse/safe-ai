@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeScan AI — Cybersecurity Assistant</title>
+  <meta name="description" content="SafeScan AI: Real-time cybersecurity assistant with URL scanning, email scanning, file checking, AI chatbot, and scam alerts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div id="toast-container"></div>
+
+  <!-- ===== MODAL OVERLAY ===== -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon">⚠️</div>
+      <h3 id="modal-title">Warning</h3>
+      <p id="modal-body">This site may be unsafe.</p>
+      <button class="btn-primary" onclick="closeModal()">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- ===== HERO SECTION ===== -->
+  <main class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+
+    <div class="hero-content">
+      <div class="logo-badge">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">SafeScan AI</span>
+      </div>
+      <h1 class="hero-title">
+        Your AI-Powered<br />
+        <span class="gradient-text">Cybersecurity Shield</span>
+      </h1>
+      <p class="hero-subtitle">
+        Real-time threat detection, phishing analysis, and intelligent protection — all running locally in your browser.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-num">99.2%</span>
+          <span class="stat-label">Detection Rate</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">0ms</span>
+          <span class="stat-label">Backend Latency</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">7</span>
+          <span class="stat-label">Security Tools</span>
+        </div>
+      </div>
+      <p class="hero-cta-hint">
+        <span class="pulse-dot"></span> Click the shield button →
+      </p>
+    </div>
+  </main>
+
+  <!-- ===== FLOATING ACTION BUTTON ===== -->
+  <button id="fab" class="fab" title="Open SafeScan AI Toolkit">
+    <span class="fab-icon">🛡️</span>
+    <span class="fab-ripple"></span>
+  </button>
+
+  <!-- ===== FLOATING SIDEBAR ===== -->
+  <aside id="sidebar" class="sidebar" aria-label="SafeScan AI Toolkit">
+    <!-- Sidebar Header (drag handle) -->
+    <div class="sidebar-header" id="sidebar-header">
+      <div class="drag-handle-dots" title="Drag to move">
+        <div class="drag-dot-row"><div class="drag-dot"></div><div class="drag-dot"></div></div>
+        <div class="drag-dot-row"><div class="drag-dot"></div><div class="drag-dot"></div></div>
+        <div class="drag-dot-row"><div class="drag-dot"></div><div class="drag-dot"></div></div>
+      </div>
+      <div class="sidebar-logo">
+        <span>🛡️</span>
+        <div>
+          <div class="sidebar-title">SafeScan AI</div>
+          <div id="api-status-badge" class="api-badge basic">⚪ Basic Mode</div>
+        </div>
+      </div>
+      <button class="sidebar-close" id="sidebar-close-btn" onclick="toggleSidebar()" title="Close">✕</button>
+    </div>
+
+    <!-- Nav Menu -->
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-panel="url" onclick="showPanel('url')">
+        <span class="nav-icon">🔗</span><span>URL Scanner</span>
+      </button>
+      <button class="nav-btn" data-panel="email" onclick="showPanel('email')">
+        <span class="nav-icon">📧</span><span>Email Scanner</span>
+      </button>
+      <button class="nav-btn" data-panel="file" onclick="showPanel('file')">
+        <span class="nav-icon">📁</span><span>File Checker</span>
+      </button>
+      <button class="nav-btn" data-panel="safety" onclick="showPanel('safety')">
+        <span class="nav-icon">🛡️</span><span>Safety Mode</span>
+      </button>
+      <button class="nav-btn" data-panel="scam" onclick="showPanel('scam')">
+        <span class="nav-icon">🚨</span><span>Scam Alerts</span>
+      </button>
+      <button class="nav-btn" data-panel="chat" onclick="showPanel('chat')">
+        <span class="nav-icon">🤖</span><span>AI Chatbot</span>
+      </button>
+      <button class="nav-btn" data-panel="settings" onclick="showPanel('settings')">
+        <span class="nav-icon">⚙️</span><span>Settings</span>
+      </button>
+    </nav>
+
+    <!-- ===== PANELS ===== -->
+    <div class="panel-container">
+
+      <!-- URL SCANNER PANEL -->
+      <div id="panel-url" class="panel active">
+        <div class="panel-header">
+          <span class="panel-icon">🔗</span>
+          <h2>URL Scanner</h2>
+        </div>
+        <p class="panel-desc">Analyze URLs for phishing indicators, suspicious patterns, and threat signals.</p>
+        <div class="input-group">
+          <input type="url" id="url-input" class="input-field" placeholder="https://example.com" />
+          <button class="btn-scan" id="url-scan-btn" onclick="scanURL()">
+            <span id="url-btn-text">Scan URL</span>
+            <span id="url-spinner" class="spinner hidden"></span>
+          </button>
+        </div>
+        <div id="url-result" class="result-box hidden">
+          <div class="risk-header">
+            <span>Risk Score</span>
+            <span id="url-score-label" class="score-label">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div id="url-progress" class="progress-bar"></div>
+          </div>
+          <div id="url-verdict" class="verdict"></div>
+          <div id="url-explanation" class="explanation"></div>
+        </div>
+      </div>
+
+      <!-- EMAIL SCANNER PANEL -->
+      <div id="panel-email" class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">📧</span>
+          <h2>Email Scanner</h2>
+        </div>
+        <p class="panel-desc">Paste email content to detect phishing language, urgency tactics, and scam indicators.</p>
+        <textarea id="email-input" class="input-field textarea" placeholder="Paste full email content here..."></textarea>
+        <button class="btn-scan" id="email-scan-btn" onclick="scanEmail()">
+          <span id="email-btn-text">Analyze Email</span>
+          <span id="email-spinner" class="spinner hidden"></span>
+        </button>
+        <div id="email-result" class="result-box hidden">
+          <div class="risk-header">
+            <span>Safety Score</span>
+            <span id="email-score-label" class="score-label">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div id="email-progress" class="progress-bar"></div>
+          </div>
+          <div id="email-verdict" class="verdict"></div>
+          <div id="email-highlights" class="highlights"></div>
+          <div id="email-explanation" class="explanation"></div>
+        </div>
+      </div>
+
+      <!-- FILE CHECKER PANEL -->
+      <div id="panel-file" class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">📁</span>
+          <h2>File Checker</h2>
+        </div>
+        <p class="panel-desc">Check file names and extensions for known dangerous types before opening them.</p>
+        <div class="file-drop-zone" id="file-drop-zone" onclick="document.getElementById('file-input').click()">
+          <div class="file-drop-icon">📂</div>
+          <div class="file-drop-text">Click or drop a file here</div>
+          <div class="file-drop-sub">File contents are NOT uploaded — name and type only</div>
+          <input type="file" id="file-input" class="hidden" onchange="checkFile(this)" />
+        </div>
+        <div id="file-result" class="result-box hidden">
+          <div id="file-name-display" class="file-name-display"></div>
+          <div id="file-verdict" class="verdict"></div>
+          <div id="file-explanation" class="explanation"></div>
+        </div>
+      </div>
+
+      <!-- SAFETY MODE PANEL -->
+      <div id="panel-safety" class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">🛡️</span>
+          <h2>Safety Mode</h2>
+        </div>
+        <p class="panel-desc">Automatically monitor the current page URL and alert you when risks are detected.</p>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Real-Time Protection</div>
+            <div class="toggle-sub" id="safety-status-text">Protection is currently OFF</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="safety-toggle" onchange="toggleSafetyMode(this)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="safety-result" class="result-box hidden">
+          <div class="risk-header">
+            <span>Current Page Risk</span>
+            <span id="safety-score-label" class="score-label">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div id="safety-progress" class="progress-bar"></div>
+          </div>
+          <div id="safety-verdict" class="verdict"></div>
+          <div id="safety-url-display" class="explanation"></div>
+        </div>
+        <div class="info-card">
+          <span>💡</span>
+          <span>Safety Mode analyzes <code>window.location.href</code> using the same detection engine as the URL Scanner.</span>
+        </div>
+      </div>
+
+      <!-- SCAM ALERTS PANEL -->
+      <div id="panel-scam" class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">🚨</span>
+          <h2>Scam Alerts</h2>
+        </div>
+        <div class="alerts-toolbar">
+          <p class="panel-desc" style="margin:0">Latest reported scam campaigns</p>
+          <label class="toggle-switch small">
+            <input type="checkbox" id="notif-toggle" onchange="toggleNotifications(this)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="scam-alerts-list" class="scam-list"></div>
+      </div>
+
+      <!-- AI CHATBOT PANEL -->
+      <div id="panel-chat" class="panel chat-panel">
+        <div class="panel-header">
+          <span class="panel-icon">🤖</span>
+          <h2>AI Assistant</h2>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+          <div class="chat-msg bot">
+            <div class="chat-bubble">
+              👋 Hi! I'm SafeScan AI. Ask me anything about cybersecurity — phishing, malware, safe browsing, or just get advice on staying protected online.
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" class="input-field" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter') sendChat()" />
+          <button class="btn-chat-send" onclick="sendChat()" title="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- SETTINGS PANEL -->
+      <div id="panel-settings" class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">⚙️</span>
+          <h2>Settings</h2>
+        </div>
+        <p class="panel-desc">Configure your AI API key to unlock intelligent scanning powered by Google Gemini.</p>
+        <div class="settings-section">
+          <label class="settings-label">Gemini API Key</label>
+          <div class="input-group">
+            <input type="password" id="api-key-input" class="input-field" placeholder="AIza..." />
+            <button class="btn-scan" onclick="saveApiKey()">Save</button>
+          </div>
+          <div id="api-key-status" class="api-status-msg"></div>
+        </div>
+        <div class="info-card">
+          <span>🔒</span>
+          <span>Your API key is stored only in your browser's <code>localStorage</code>. It is never sent to any server except Google's API.</span>
+        </div>
+        <div class="settings-section">
+          <label class="settings-label">Appearance</label>
+          <div class="accent-picker">
+            <button class="accent-btn" style="--ac:#00c8ff" onclick="setAccent('#00c8ff','#7b2fff')" title="Blue/Purple"></button>
+            <button class="accent-btn" style="--ac:#00ffb3" onclick="setAccent('#00ffb3','#0066ff')" title="Cyan/Blue"></button>
+            <button class="accent-btn" style="--ac:#ff6b35" onclick="setAccent('#ff6b35','#ff1f71')" title="Orange/Red"></button>
+            <button class="accent-btn" style="--ac:#a855f7" onclick="setAccent('#a855f7','#ec4899')" title="Purple/Pink"></button>
+          </div>
+        </div>
+        <div class="settings-section">
+          <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All Saved Data</button>
+        </div>
+      </div>
+
+    </div><!-- end panel-container -->
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
